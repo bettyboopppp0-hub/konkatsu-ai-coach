@@ -6,7 +6,7 @@ PAGES = {
     "": [st.Page("views/0_ホーム.py", title="ホーム", icon="🏠", default=True)],
     "プロフィールを整える": [
         st.Page("views/1_プロフィール診断.py", title="プロフィール診断", icon="💌"),
-        st.Page("views/7_写真診断.py", title="写真・スクショ診断", icon="📷"),
+        st.Page("views/7_写真診断.py", title="スクショ診断", icon="📷"),
         st.Page("views/2_プロフィール作成.py", title="プロフィール作成", icon="✍️"),
     ],
     "やり取りを進める": [
