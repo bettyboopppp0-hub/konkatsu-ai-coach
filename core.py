@@ -1,3 +1,4 @@
+import inspect
 import json
 import os
 import time
@@ -163,6 +164,14 @@ def paywall():
         st.switch_page("views/10_料金プラン.py")
 
 
+def _log_use(label: str):
+    print(
+        f"[USE] {time.strftime('%Y-%m-%d %H:%M:%S')} tool={label} "
+        f"session_used={st.session_state.get('quota_used', 0)} today_total={_global_usage()}",
+        flush=True,
+    )
+
+
 def _check_quota():
     if _global_usage() >= GLOBAL_DAILY_CAP:
         st.warning("本日の提供枠が上限に達しました。申し訳ありませんが、明日またお試しください。")
@@ -174,6 +183,7 @@ def _check_quota():
 
     st.session_state["quota_used"] = used_today() + 1
     _bump_global_usage()
+    _log_use(st.session_state.get("current_tool", "unknown"))
 
 
 def _call(contents, json_mode: bool):
@@ -233,6 +243,13 @@ def ask_json_with_image(prompt: str, image_bytes: bytes, mime_type: str):
 
 def settings_bar() -> dict:
     theme.inject()
+
+    caller = inspect.stack()[1].filename
+    st.session_state["current_tool"] = os.path.splitext(os.path.basename(caller))[0]
+
+    if not st.session_state.get("visit_logged"):
+        st.session_state["visit_logged"] = True
+        print(f"[VISIT] {time.strftime('%Y-%m-%d %H:%M:%S')} 新しい訪問者がアプリを開きました", flush=True)
 
     current = (
         f"{st.session_state.get('s_gender', '男性')} "
